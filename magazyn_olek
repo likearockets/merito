@@ -1,0 +1,22 @@
+int maxWarehouseCapacity = 10000;
+    public Map<SupportedMetalType, Double> clientInventory = new HashMap<>();
+    public Map<String, Map<SupportedMetalType, Double>> clientMetalInventory = new HashMap<>();
+
+
+    @Override
+    public void addMetalIngot(String clientId, SupportedMetalType metalType, double mass) throws ClientNotFoundException, ProhibitedMetalTypeException, FullWarehouseException {
+
+            clientMetalInventory.put(clientId, clientInventory);
+            //magazyn danego klienta
+            clientInventory = clientMetalInventory.get(clientId);
+
+            double totalVolumeOccupied = clientInventory.values().stream().mapToDouble(Double::doubleValue).sum();
+
+            if (totalVolumeOccupied + (mass / metalType.getDensity()) > maxWarehouseCapacity) {
+                throw new FullWarehouseException("Za duże obciążenie magazynu!");
+            }
+            else {
+                // dodaj klientowi nową sztabkę (jak już ma taką sztabkę to dodaj do obecnej wagę nowej)
+                clientInventory.put(metalType, clientInventory.getOrDefault(metalType, 0.0) + mass);
+            }
+    }
